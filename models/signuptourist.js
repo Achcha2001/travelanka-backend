@@ -11,6 +11,11 @@ const signupScema = new Schema({
         type:String,
         required:true
     },
+   contactnumber:{
+     type:Number,
+     required:true
+
+    },
     password:{
         type:String,
         required:true

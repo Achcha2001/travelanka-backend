@@ -1,77 +1,77 @@
 const router = require("express").Router();
-let Contact = require("../models/contact");
+const Contact = require("../models/contact");
 
-// taking the request
-router.route("/add").post((req,res)=>{
-    const name = req.body.name;
-    const email = req.body.email;
-    const subject = req.body.subject;
-    const message = req.body.message;
+// Create a new contact message
+router.route("/add").post((req, res) => {
+  const { name, email, subject, message } = req.body;
 
-    const newContact = new Contact({
-        name,
-        email,
-        subject,
-        message
+  const newContact = new Contact({
+    name,
+    email,
+    subject,
+    message
+  });
+
+  newContact
+    .save()
+    .then(() => {
+      res.json("Message logged successfully");
+    })
+    .catch((err) => {
+      console.log(err);
     });
-    //promise
-    newContact.save().then(()=>{
-        res.json("message logged successfully")
-    }).catch((err)=>{
-        console.log(err);
-    })
-})
-//recalling
-router.route("/").get((req,res)=>{
-    Contact.find().then((contact)=>{
-        res.json(contact)
-    }).catch((err)=>{
-        console.log(err);
-    })
-})
+});
 
-//update
-router.route("/update/:id").put(async(req,res)=>{
-    let userId = req.params.id;
-    //destructuring
-    const{name,email,subject,message} = req.body;
-    const updateContact = {
-        name,
-        email,
-        subject,
-        message
-    }
-    const update = await Contact.findByIdAndUpdate(userId,updateContact).then(()=>{
-        res.status(200).send({status:"message updated"})
-    }).catch((err)=>{
-        console.log(err);
-        res.status(500).send({status:"error updating message"})
+// Get all contact messages
+router.route("/").get((req, res) => {
+  Contact.find()
+    .then((contact) => {
+      res.json(contact);
     })
-})
+    .catch((err) => {
+      console.log(err);
+    });
+});
 
+// Update a contact message
+router.route("/update/:id").put(async (req, res) => {
+  const { name, email, subject, message } = req.body;
+  const updateContact = {
+    name,
+    email,
+    subject,
+    message
+  };
 
-//delete
-router.route("/delete/:id").delete(async(req ,res)=>{
-    let userId = req.params.id;
-    await Contact.findByIdAndDelete(userId)
-    .then(()=>{
-       res.status(200).send({status:"Messege deleted"})
-    }).catch((err)=>{
-       console.log(err.message);
-       res.status(500).send({status:"Error with delete mesage",error:err.message});
-   
-    })
-   })
-   router.route("/get/:id").get(async(req,res)=>{
-       let userId = req.params.id;
-       const user = await Contact.findById(userId)
-       .then((contact)=>{
-           res.status(200).send({status:"message fetched",contact})
-       }).catch(()=>{
-           console.log(err.message);
-           res.status(500).send({status:"Error",error:err.message});
-       })
-   })
+  try {
+    await Contact.findByIdAndUpdate(req.params.id, updateContact);
+    res.status(200).send({ status: "Message updated" });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({ status: "Error updating message" });
+  }
+});
 
+// Delete a contact message
+router.route("/delete/:id").delete(async (req, res) => {
+  try {
+    await Contact.findByIdAndDelete(req.params.id);
+    res.status(200).send({ status: "Message deleted" });
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).send({ status: "Error with deleting message", error: err.message });
+  }
+});
+
+// Get a contact message by ID
+router.route("/get/:id").get(async (req, res) => {
+  try {
+    const contact = await Contact.findById(req.params.id);
+    res.status(200).send({ status: "Message fetched", contact });
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).send({ status: "Error", error: err.message });
+  }
+});
 
 module.exports = router;
