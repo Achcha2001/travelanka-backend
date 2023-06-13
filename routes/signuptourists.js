@@ -37,17 +37,17 @@ router.route("/add").post((req, res) => {
   });
 });
 
-router.route("/").get((req, res) => {
-  tourist
-    .find()
-    .then((tourist) => {
-      res.json(tourist);
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).send({ status: "Error retrieving tourist data" });
-    });
-});
+// router.route("/").get((req, res) => {
+//   tourist
+//     .find()
+//     .then((tourist) => {
+//       res.json(tourist);
+//     })
+//     .catch((err) => {
+//       console.log(err);
+//       res.status(500).send({ status: "Error retrieving tourist data" });
+//     });
+// });
 
 router.route("/update/:id").put(async (req, res) => {
   let userId = req.params.id;
