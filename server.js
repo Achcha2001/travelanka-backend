@@ -20,7 +20,10 @@ require("dotenv").config();
 //seperated by logical or operator
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());
+const corsOptions = {
+    origin: "https://https://front-achcha2001.vercel.app/", // frontend URI (ReactJS)
+}
+app.use(cors(corsOptions));
 
 //key value paring
 app.use(bodyParser.json());
